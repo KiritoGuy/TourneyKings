@@ -7,15 +7,16 @@ import json
 
 from discord.ext import commands
 from pretty_help import PrettyHelp
+from config import *
 
 
-class TourneyKings(commands.Bot):
+class TourneyKings(commands.Bot): # defining our bot here [ PART 1 ]
     def __init__(self):
         self.description = """Tourney King An Powerful Bot For Sure"""
 
         super().__init__(
             command_prefix=PREFIX,
-            owner_ids=OWNER_ID,
+            owner_ids=OWNER_IDS,
             intents=discord.Intents.all(),
             help_command=PrettyHelp(),
             description=self.description,
