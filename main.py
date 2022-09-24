@@ -6,7 +6,6 @@ import discord
 import json
 
 from discord.ext import commands
-from pretty_help import PrettyHelp
 from config import *
 
 
@@ -18,7 +17,7 @@ class TourneyKings(commands.Bot): # defining our bot here [ PART 1 ]
             command_prefix=PREFIX,
             owner_ids=OWNER_IDS,
             intents=discord.Intents.all(),
-            help_command=PrettyHelp(),
+            help_command=None,
             description=self.description,
             case_insensitive=True,
             start_time=datetime.utcnow(),
