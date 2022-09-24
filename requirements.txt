@@ -5,3 +5,4 @@ motor
 psutil
 nest_asyncio
 dnspython
+python-dotenv
