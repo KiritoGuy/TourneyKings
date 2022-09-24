@@ -1,0 +1,7 @@
+py-cord
+jishaku
+discord-pretty-help
+motor
+psutil
+nest_asyncio
+dnspython
