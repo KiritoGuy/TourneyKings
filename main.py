@@ -70,7 +70,7 @@ async def reload(ctx, extension):
 
 for filename in listdir("./cogs"):
     if filename.endswith(".py"):
-        bot.load_extension(f"cogs.{filename[:-3]}")
+        client.load_extension(f"cogs.{filename[:-3]}")
 
 client.load_extension("jishaku")
 client.loop.run_until_complete(client.run(TOKEN))
