@@ -46,16 +46,6 @@ class TourneyKings(commands.Bot): # defining our bot here [ PART 1 ]
 
 client = TourneyKings() # defining our bot here [ PART 2 ]
 
-with open('./data.json') as f:
-  d1 = json.load(f)
-with open('./market.json') as f:
-  d2 = json.load(f)
-
-def bot_info():
-    return d1
-def market_info():
-    return d2
-
 @client.command(hidden=True)
 @commands.is_owner()
 async def load(ctx, extension):
