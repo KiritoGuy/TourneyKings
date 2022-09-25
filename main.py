@@ -1,76 +1,35 @@
-from datetime import datetime, timedelta
-from os import listdir, system
+from logging import basicConfig, INFO
+from config import TOKEN, OWNER_IDS
+from utils.bot import TourneyKings
+from os import environ
+from handler import InteractionClient
 
-import aiohttp
-import discord
-import json
+basicConfig(level=INFO)
 
-from discord.ext import commands
-from config import *
-
-
-class TourneyKings(commands.Bot): # defining our bot here [ PART 1 ]
-    def __init__(self):
-        self.description = """Tourney King An Powerful Bot For Sure"""
-
-        super().__init__(
-            command_prefix=PREFIX,
-            owner_ids=OWNER_IDS,
-            intents=discord.Intents.all(),
-            help_command=None,
-            description=self.description,
-            case_insensitive=True,
-            start_time=datetime.utcnow(),
-        )
-
-    async def on_connnect(self):
-        self.session = aiohttp.ClientSession(loop=self.loop)
-
-        cT = datetime.now() + timedelta(
-            hours=5, minutes=30
-        )  # GMT+05:30 is Our TimeZone So.
-
-        print(
-            f"[ Log ] {self.user} Connected at {cT.hour}:{cT.minute}:{cT.second} / {cT.day}-{cT.month}-{cT.year}"
-        )
-
-    async def on_ready(self):
-        cT = datetime.now() + timedelta(
-            hours=5, minutes=30
-        )  # GMT+05:30 is Our TimeZone So.
-
-        print(
-            f"[ Log ] {self.user} Ready at {cT.hour}:{cT.minute}:{cT.second} / {cT.day}-{cT.month}-{cT.year}"
-        )
-        print(f"[ Log ] GateWay WebSocket Latency: {self.latency*1000:.1f} ms")
-
-client = TourneyKings() # defining our bot here [ PART 2 ]
-
-@client.command(hidden=True)
-@commands.is_owner()
-async def load(ctx, extension):
-    client.load_extension(f"cogs.{extension}")
-    await ctx.send("Done")
+client = TourneyKings()
+InteractionClient(client)
 
 
-@client.command(hidden=True)
-@commands.is_owner()
-async def unload(ctx, extension):
-    client.unload_extension(f"cogs.{extension}")
-    await ctx.send("Done")
+environ.setdefault("JISHAKU_HIDE", "1")
+environ.setdefault("JISHAKU_NO_UNDERSCORE", "1")
 
 
-@client.command(hidden=True)
-@commands.is_owner()
-async def reload(ctx, extension):
-    client.unload_extension(f"cogs.{extension}")
-    client.load_extension(f"cogs.{extension}")
-    await ctx.send("Done")
+@client.check
+async def check_commands(ctx):
+    if ctx.guild is None:
+        return False
+    if ctx.author.bot:
+        return False
+
+@client.listen('on_global_commands_update')
+async def on_global_commands_update(commands: list):
+    print(f'{len(commands)} Global commands updated')
 
 
-for filename in listdir("./cogs"):
-    if filename.endswith(".py"):
-        client.load_extension(f"cogs.{filename[:-3]}")
+@client.listen('on_guild_commands_update')
+async def on_guild_commands_update(commands: list, guild_id: int):
+    print(f"{len(commands)} Guild commands updated for guild ID: {guild_id}")
 
-client.load_extension("jishaku")
-client.loop.run_until_complete(client.run(TOKEN))
+
+if __name__ == '__main__':
+    client.run(TOKEN)
