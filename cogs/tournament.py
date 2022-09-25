@@ -13,7 +13,7 @@ nest_asyncio.apply()
 database = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URL)
 tournament = database["TOURNEYKING"]["SERVER"]
 
-class tournament(commands.Cog):
+class Tournament(commands.Cog):
     """ Commands related to tournament"""
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
@@ -40,3 +40,6 @@ class tournament(commands.Cog):
     @app_commands.command(name="start")
     async def start(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_message("Hello from command 1!", ephemeral=True)
+
+def setup(client):
+    client.add_cog(Tournament(client))
