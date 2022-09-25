@@ -8,7 +8,7 @@ import sys
 import traceback
 
 from config import (
-    TOKEN, DATABASE_URL
+    TOKEN, DATABASE_URL, DB_UPDATE_INTERVAL
 )
 
 class TourneyKings(commands.AutoShardedBot):
@@ -69,3 +69,53 @@ class TourneyKings(commands.AutoShardedBot):
             self.loaded, self.not_loaded = self.loop.run_until_complete(self.load_extensions('./cogs'))
             self.loaded_hidden, self.not_loaded_hidden = self.loop.run_until_complete(self.load_extensions('./cogs_hidden'))
             self.cogs_loaded = True
+
+    async def set_default_guild_config(self, guild_id):
+        pain = {
+            "_id": guild_id,
+            "tourney": {"active": None, "game": None, "count": None, "slots": 0, "Name": None, "reg_category": None, "reg_channel": None, "reg_time": None, "confimed_role": None, "reg_message": 0},
+        }
+
+        self.serverconfig_cache.append(pain)
+        return await self.get_guild_config(guild_id)
+
+    async def get_guild_config(self, guild_id):
+        for e in self.serverconfig_cache:
+            if e['_id'] == guild_id:
+                if "tourney" not in e:
+                    e.update({"tournament": {"active": None, "game": None, "count": None, "slots": 0, "name": None, "reg_catagory": None, "reg_channel": None, "reg_time": None, "confimed_role": None, "reg_message": 0}})
+                return e
+        return await self.set_default_guild_config(guild_id)
+
+    @tasks.loop(seconds=DB_UPDATE_INTERVAL, reconnect=True)
+    async def update_prefixes_db(self):
+        if self.cache_loaded:
+            cancer = []
+            for e in self.prefixes_cache:
+                hmm = UpdateOne(
+                    {"_id": e["_id"]},
+                    {"$set": {"prefix": e['prefix']}},
+                    upsert=True
+                )
+                cancer.append(hmm)
+            if len(cancer) != 0:
+                await self.prefixes.bulk_write(cancer)
+            self.last_updated_prefixes_db = time.time()
+
+
+    @tasks.loop(seconds=DB_UPDATE_INTERVAL, reconnect=true)
+    async def update_user_profile_db(self):
+        if self.cache_loaded:
+            cancer = []
+            for h in self.user_profile_cache:
+                hh = h.copy()
+                hh.pop("_id")
+                hmm = updateone(
+                    {"_id": h["_id"]},
+                    {"$set": hh},
+                    upsert=true
+                )
+                cancer.append(hmm)
+            if len(cancer) != 0:
+                await self.user_profile_db.bulk_write(cancer)
+            self.last_updated_user_profile_db = time.time()
