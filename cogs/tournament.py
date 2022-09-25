@@ -29,13 +29,8 @@ class tournament(commands.Cog):
 
     async def new_tournament(self, server_id : int, registeration_channel: int, registeration_category : int, registration_time : 0, confimed_role : int, slots : int):
         if server_id is not None:
-            await tournament.update_one({"server_id": server_id}, {"$set": {"registeration_channel": registeration_channel, 
-                                                              "registeration_category" : registeration_category, 
-                                                              "registration_time" : registration_time, 
-                                                              "confimed_role" : confimed_role, 
-                                                              "slots" : slots}
-                                                    }
-                                       )
+            await tournament.update_one({"server_id": server_id}, {"$set": {"registeration_channel": registeration_channel, "registeration_category" : registeration_category, "registration_time" : registration_time, "confimed_role" : confimed_role, "slots" : slots}})
+
     async def add_organizer(self, server_id : int, organizers : int)
         if server_id is not None:
             await tournament.update_one({"server_id": server_id}, {"$set": {"organizer": organizers}})
@@ -43,5 +38,5 @@ class tournament(commands.Cog):
 
 
     @app_commands.command(name="start")
-    async def my_command(self, interaction: discord.Interaction) -> None:
+    async def start(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_message("Hello from command 1!", ephemeral=True)
