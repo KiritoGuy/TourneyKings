@@ -6,3 +6,4 @@ psutil
 nest_asyncio
 dnspython
 python-dotenv
+discord.py
